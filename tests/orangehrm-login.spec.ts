@@ -1,43 +1,38 @@
-import { parse } from 'csv-parse/sync';
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { DashboardPage } from '../pages/DashboardPage';
 import { LoginPage } from '../pages/LoginPage';
+import type { Credentials } from '../types/credentials';
+import type { LoginCase, LoginOutcomes } from '../types/login';
 
-type LoginData = {
-  Username: string;
-  Password: string;
-  Expected: 'Dashboard' | 'Invalid credentials';
-};
+test.use({ storageState: { cookies: [], origins: [] } });
 
-const csvPath = resolve(__dirname, '../test_data/loginData.csv');
-const loginData = parse<LoginData>(readFileSync(csvPath), {
-  columns: true,
-  skip_empty_lines: true,
-  trim: true,
-});
+const credentials: Credentials = require('../test_data/credentials.json');
+const loginCases: LoginCase[] = require('../test_data/login-cases.json');
+const expectedOutcomes: { login: LoginOutcomes } = require('../test_data/expected-outcomes.json');
 
-test.describe('OrangeHRM CSV-driven login validation', () => {
-  for (const { Username, Password, Expected } of loginData) {
-    test(`${Username} expects ${Expected}`, async ({ page }) => {
+test.describe('OrangeHRM login validation', () => {
+  for (const { credentialId, expectedOutcomeId } of loginCases) {
+    const { username, password } = credentials[credentialId];
+
+    test(`${username} expects ${expectedOutcomeId}`, async ({ page }) => {
       try {
         const loginPage = new LoginPage(page);
         const dashboardPage = new DashboardPage(page);
 
         await loginPage.goto();
-        await loginPage.login(Username, Password);
+        await loginPage.login(username, password);
 
-        if (Expected === 'Dashboard') {
-          await expect(page).toHaveURL(/\/web\/index\.php\/dashboard\/index$/);
-          await expect(dashboardPage.heading).toBeVisible();
+        if (expectedOutcomeId === 'dashboard') {
+          const outcome = expectedOutcomes.login.dashboard;
+          await expect(page).toHaveURL(url => url.pathname === outcome.path);
+          await expect(dashboardPage.heading).toHaveText(outcome.heading);
         } else {
-          await expect(page.getByText('Invalid credentials')).toBeVisible();
+          await expect(page.getByText(expectedOutcomes.login.invalidCredentials.message)).toBeVisible();
         }
 
-        console.log(`PASS: ${Username} -> ${Expected}`);
+        console.log(`PASS: ${username} -> ${expectedOutcomeId}`);
       } catch (error) {
-        console.error(`FAIL: ${Username} -> ${Expected}`);
+        console.error(`FAIL: ${username} -> ${expectedOutcomeId}`);
         throw error;
       }
     });

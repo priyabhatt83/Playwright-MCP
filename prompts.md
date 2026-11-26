@@ -139,29 +139,23 @@ Generate a Playwright test for the following scenario:
 
 
 
-## Prompt 8: Login Functionality (Data Driven using External file)
+## Prompt 8: Login Functionality (Data Driven using JSON files)
 
-Generate a Playwright test in Typescript using @playwright/test that performs data-driven testig with csv file.Try to use "csv-parse" package to handle CSV parsing.
+Generate a Playwright test in TypeScript using @playwright/test that loads data from JSON files.
 
 Scenario: Login validation on https://opensource-demo.orangehrmlive.com
 
 ## Requirements:
-1. Read test data from an external CSV file called "loginData.csv" located in the "test_data" folder. The file has the following columns: Username, Password, Expected.
-   Example rows:
-   - Admin, admin123, Dashboard
-   - fakeuser, fakepass, Invalid credentials
-   - ESSUser1, ess123, Invalid credentials
+1. Read the login scenarios from "login-cases.json" in the "test_data" folder.
+2. Keep username/password pairs in "credentials.json" and refer to them by ID from each login scenario.
+3. Keep expected result details in "expected-outcomes.json" and refer to them by ID from each login scenario.
 
-2. For each row in the dataset:
+4. For each scenario:
    - Navigate to the OrangeHRM login page
-   - Enter the Username and Password from the dataset
+   - Look up the username and password using the scenario's credential ID
    - Click the Login button
-   - Verify the Expected result:
-      - If Expected = "Dashboard", check that the dashboard page is visible
-      - If Expected = "Invalid credentials", check that the error message "Invalid credentials" is displayed
+   - Verify the expected result selected by the scenario's outcome ID
 
-3. Implement iteration so that all rows in the dataset are tested automatically within one test suite.
+5. Implement iteration so that all scenarios are tested automatically within one test suite.
 
-4. Log pass/fail results for each dataset entry in the test output.
-
-5. Close the browser after all tests complete.
+6. Log pass/fail results for each scenario in the test output.

@@ -1,0 +1,14 @@
+{
+  "login": {
+    "dashboard": {
+      "path": "/web/index.php/dashboard/index",
+      "heading": "Dashboard"
+    },
+    "invalidCredentials": {
+      "message": "Invalid credentials"
+    }
+  },
+  "employeeProfiles": {
+    "john123Doe456Profile": "John123 Doe456"
+  }
+}

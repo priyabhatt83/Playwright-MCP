@@ -1,4 +1,0 @@
-Username,Password,Expected
-Admin, admin123, Dashboard
-fakeuser, fakepass, Invalid credentials
-ESSUser1, ess123, Invalid credentials

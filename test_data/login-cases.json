@@ -1,0 +1,14 @@
+[
+  {
+    "credentialId": "admin",
+    "expectedOutcomeId": "dashboard"
+  },
+  {
+    "credentialId": "fakeUser",
+    "expectedOutcomeId": "invalidCredentials"
+  },
+  {
+    "credentialId": "essUser1",
+    "expectedOutcomeId": "invalidCredentials"
+  }
+]
